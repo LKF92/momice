@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@apollo/react-hooks"; // Didn't work
+import React, { useState } from "react";
+// import { useQuery, useMutation } from "@apollo/react-hooks"; >>> Didn't work
 import { Mutation } from "@apollo/react-components"; // Used this instead...
 import gql from "graphql-tag";
 import TextField from "@material-ui/core/TextField";
@@ -38,15 +38,8 @@ const NEW_USER = gql`
     }
   }
 `;
-const NEW_ATTENDEE = gql`
-  mutation AddAttendee($eventID: ID!, $userID: ID!) {
-    addAttendee(eventID: $eventID, userID: $userID) {
-      id
-    }
-  }
-`;
 
-export default function AttendanceForm({ eventID }) {
+export default function AttendanceForm({ setNewUser }) {
   const classes = useStyles();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -70,13 +63,11 @@ export default function AttendanceForm({ eventID }) {
   //    is created in the database...
   //    more info about the bug >>> https://github.com/apollographql/react-apollo/issues/3250
   //   };
-  const [attendee, setAttendee] = useState({});
-  useEffect(() => {}, [attendee]);
 
   return (
-    <Mutation mutation={NEW_USER} onCompleted={data => setAttendee(data.newUser.id)}>
+    <Mutation mutation={NEW_USER} onCompleted={data => setNewUser(data.newUser.id)}>
       {(newUser, response) => {
-        console.log("response from mutation:", response);
+        if (response.called) console.log("response from mutation:", response);
         return (
           <form
             className={classes.root}
@@ -84,7 +75,7 @@ export default function AttendanceForm({ eventID }) {
             onSubmit={e => {
               e.preventDefault();
               newUser({
-                variables: { firstName, lastName, email, gender, birthday, hobbies, newUser }
+                variables: { firstName, lastName, email, gender, birthday, hobbies }
               });
             }}
           >
