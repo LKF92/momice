@@ -4,17 +4,7 @@ import AttendeeList from "../components/AttendeeList";
 import AttendanceForm from "../components/AttendanceForm";
 
 export default function EventPage({ location }) {
-  // We get the event.id from the params
-
-  // // useQuery from Apollo Client to manage the query state and its response/error
-  // const { data, loading, error } = useQuery(ALL_ATTENDEES, {
-  //   variables: { eventID: params.id }
-  // });
-
-  // We'll share the newly created user from <AttendanceForm /> to <AttendeeList />
-  // to update the attendee list and to keep one mutation per component
-  const [newUser, setNewUser] = useState("");
-
+  const [refresh, setRefresh] = useState(0);
   return (
     <div style={styles.container}>
       <div style={styles.mainBloc}>
@@ -24,12 +14,12 @@ export default function EventPage({ location }) {
           <EventCard {...location.state} isButton={false} isDetailed={true} />
         </div>
         <div style={styles.bloc}>
-          <AttendeeList eventID={location.state.id} newUser={newUser} setNewUser={setNewUser} />
+          <AttendeeList eventID={location.state.id} />
         </div>
       </div>
       <div style={styles.formSection}>
         {/* We pass in the eventID to the form component to be able to link the new user to this event */}
-        <AttendanceForm setNewUser={setNewUser} />
+        <AttendanceForm {...location.state} setRefresh={setRefresh} />
       </div>
     </div>
   );

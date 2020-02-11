@@ -41,27 +41,8 @@ const ALL_ATTENDEES = gql`
   }
 `;
 
-// To add an attendee after having created a new user
-// (couldn't use the mutation hooks so I had to use the Mutation Component and I prefered
-// spreading the Mutation in different components instead of nesting them...)
-// It also makes more sense like this cause I can refresh the attendee list after having created a new attendee
-const NEW_ATTENDEE = gql`
-  mutation AddAttendee($eventID: ID!, $userID: ID!) {
-    addAttendee(eventID: $eventID, userID: $userID) {
-      id
-    }
-  }
-`;
-
 export default function AttendeeList({ eventID, newUser, setNewUser }) {
   const classes = useStyles();
-  const [triggerMutation, setTriggerMutation] = useState(false);
-  console.log("newUser =", newUser);
-  useEffect(() => {
-    if (newUser) {
-      setTriggerMutation(true);
-    }
-  }, [newUser]);
 
   // useQuery from Apollo Client to get the list of attendees
   const { data, loading, error } = useQuery(ALL_ATTENDEES, {
@@ -73,17 +54,6 @@ export default function AttendeeList({ eventID, newUser, setNewUser }) {
 
   return (
     <>
-      {triggerMutation === true && (
-        <Mutation mutation={NEW_ATTENDEE}>
-          {(newAttendee, response) => {
-            console.log("response from NEW_ATTENDEE", response);
-            newAttendee({ variables: { eventID: eventID, userID: newUser } }).then(data =>
-              setTriggerMutation(false)
-            );
-            return <p>added last attendee to the DB</p>;
-          }}
-        </Mutation>
-      )}
       <h2>People attending the event : </h2>
       {data.allAttendees.length ? (
         <div className={classes.demo}>
