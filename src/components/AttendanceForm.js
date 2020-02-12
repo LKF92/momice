@@ -59,22 +59,23 @@ export default function AttendanceForm({ id, date, title, location, description,
   //   const [newUser, newUserResponse] = useMutation(NEW_USER, { ignoreResults: false }) >>> didn't work
   const [newAttendee, newAttendeeResponse] = useMutation(NEW_ATTENDEE, { ignoreResults: false });
 
-  //   const handleFormWithHooks = async event => {
+  //   const handleFormWithHooks = event => {
   //     event.preventDefault();
-  //     await newUser({
+  //     newUser({
   //       variables: { firstName, lastName, email, gender, birthday, hobbies, newUser },
   //       ignoreResults: false // see below
   //       onCompleted: data => newAttendee({ variables: { eventID: eventID, userID: data.newUser.id }})
   //     });
   //    console.log(newUserResponse); // when using the useMutation hook, the response prop was indicating that :
-  //    {called: false, loading: false} so I cannot access the data sent back from the server even though the user
-  //    is created in the database...
+  //    {called: false, loading: false} so I couldn't access the data sent back from the server even though the user
+  //    was created in the database...
   //    more info about the bug >>> https://github.com/apollographql/react-apollo/issues/3250
   //   };
 
   return (
     <Mutation
       mutation={NEW_USER}
+      // We wait for the newUser mutation to be completed to get the userID to create a new attendee
       onCompleted={data => {
         newAttendee({
           variables: { eventID: id, userID: data.newUser.id },
