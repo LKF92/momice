@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@apollo/react-hooks"; // Didn't work
+import { useQuery, useMutation } from "@apollo/react-hooks"; //>>> Didn't work
 import { Mutation } from "@apollo/react-components"; // Used this instead...
 import gql from "graphql-tag";
 import TextField from "@material-ui/core/TextField";
@@ -38,6 +38,7 @@ const NEW_USER = gql`
     }
   }
 `;
+
 const NEW_ATTENDEE = gql`
   mutation AddAttendee($eventID: ID!, $userID: ID!) {
     addAttendee(eventID: $eventID, userID: $userID) {
@@ -46,7 +47,7 @@ const NEW_ATTENDEE = gql`
   }
 `;
 
-export default function AttendanceForm({ eventID }) {
+export default function AttendanceForm({ id, date, title, location, description, queryToRefetch }) {
   const classes = useStyles();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -56,7 +57,7 @@ export default function AttendanceForm({ eventID }) {
   const [birthday, setBirthday] = useState("");
   const [hobbies, setHobbies] = useState("");
   //   const [newUser, newUserResponse] = useMutation(NEW_USER, { ignoreResults: false }) >>> didn't work
-  //   const [newAttendee, newAttendeeResponse] = useMutation(NEW_ATTENDEE, { ignoreResults: false })
+  const [newAttendee, newAttendeeResponse] = useMutation(NEW_ATTENDEE, { ignoreResults: false });
 
   //   const handleFormWithHooks = async event => {
   //     event.preventDefault();
@@ -70,13 +71,18 @@ export default function AttendanceForm({ eventID }) {
   //    is created in the database...
   //    more info about the bug >>> https://github.com/apollographql/react-apollo/issues/3250
   //   };
-  const [attendee, setAttendee] = useState({});
-  useEffect(() => {}, [attendee]);
 
   return (
-    <Mutation mutation={NEW_USER} onCompleted={data => setAttendee(data.newUser.id)}>
+    <Mutation
+      mutation={NEW_USER}
+      onCompleted={data => {
+        newAttendee({
+          variables: { eventID: id, userID: data.newUser.id },
+          refetchQueries: [{ query: queryToRefetch, variables: { eventID: id } }]
+        });
+      }}
+    >
       {(newUser, response) => {
-        console.log("response from mutation:", response);
         return (
           <form
             className={classes.root}
@@ -84,7 +90,7 @@ export default function AttendanceForm({ eventID }) {
             onSubmit={e => {
               e.preventDefault();
               newUser({
-                variables: { firstName, lastName, email, gender, birthday, hobbies, newUser }
+                variables: { firstName, lastName, email, gender, birthday, hobbies }
               });
             }}
           >

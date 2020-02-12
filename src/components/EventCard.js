@@ -10,6 +10,9 @@ import { Link } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
+    display: "flex",
+    flexFlow: "column nowrap",
+    justifyContent: "space-between",
     width: "300px",
     maxHeight: 300,
     marginRight: "10px"
@@ -18,7 +21,11 @@ const useStyles = makeStyles({
     fontSize: 14
   },
   pos: {
-    marginBottom: 12
+    marginBottom: 12,
+    display: "-webkit-box",
+    "-webkit-line-clamp": 3,
+    "-webkit-box-orient": "vertical",
+    overflow: "hidden"
   },
   btn: {
     backgroundColor: colors.yellow
