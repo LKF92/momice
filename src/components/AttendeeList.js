@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function AttendeeList({ eventID, newUser, setNewUser, data }) {
+export default function AttendeeList({ data }) {
   const classes = useStyles();
 
   return (
