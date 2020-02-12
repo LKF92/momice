@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-// import { useQuery, useMutation } from "@apollo/react-hooks"; >>> Didn't work
+import React, { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@apollo/react-hooks"; //>>> Didn't work
 import { Mutation } from "@apollo/react-components"; // Used this instead...
 import gql from "graphql-tag";
 import TextField from "@material-ui/core/TextField";
@@ -39,7 +39,15 @@ const NEW_USER = gql`
   }
 `;
 
-export default function AttendanceForm({ setNewUser }) {
+const NEW_ATTENDEE = gql`
+  mutation AddAttendee($eventID: ID!, $userID: ID!) {
+    addAttendee(eventID: $eventID, userID: $userID) {
+      id
+    }
+  }
+`;
+
+export default function AttendanceForm({ id, date, title, location, description, queryToRefetch }) {
   const classes = useStyles();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -49,7 +57,7 @@ export default function AttendanceForm({ setNewUser }) {
   const [birthday, setBirthday] = useState("");
   const [hobbies, setHobbies] = useState("");
   //   const [newUser, newUserResponse] = useMutation(NEW_USER, { ignoreResults: false }) >>> didn't work
-  //   const [newAttendee, newAttendeeResponse] = useMutation(NEW_ATTENDEE, { ignoreResults: false })
+  const [newAttendee, newAttendeeResponse] = useMutation(NEW_ATTENDEE, { ignoreResults: false });
 
   //   const handleFormWithHooks = async event => {
   //     event.preventDefault();
@@ -65,9 +73,16 @@ export default function AttendanceForm({ setNewUser }) {
   //   };
 
   return (
-    <Mutation mutation={NEW_USER} onCompleted={data => setNewUser(data.newUser.id)}>
+    <Mutation
+      mutation={NEW_USER}
+      onCompleted={data => {
+        newAttendee({
+          variables: { eventID: id, userID: data.newUser.id },
+          refetchQueries: [{ query: queryToRefetch, variables: { eventID: id } }]
+        });
+      }}
+    >
       {(newUser, response) => {
-        if (response.called) console.log("response from mutation:", response);
         return (
           <form
             className={classes.root}
