@@ -86,7 +86,7 @@ export default function AttendanceForm({ id, date, title, location, description,
       {(newUser, response) => {
         return (
           <form
-            className={classes.root}
+            className="subscription-form"
             autoComplete="off"
             onSubmit={e => {
               e.preventDefault();
@@ -97,6 +97,7 @@ export default function AttendanceForm({ id, date, title, location, description,
           >
             <div style={{ display: "flex" }}>
               <TextField
+                name="firstName"
                 error={firstName ? false : true}
                 id="filled-error"
                 label="First Name "
@@ -107,6 +108,7 @@ export default function AttendanceForm({ id, date, title, location, description,
                 onChange={e => setFirstName(e.target.value)}
               />
               <TextField
+                name="lastName"
                 error={lastName ? false : true}
                 id="filled-error-helper-text"
                 label="Last Name"
@@ -118,6 +120,7 @@ export default function AttendanceForm({ id, date, title, location, description,
                 onChange={e => setLastName(e.target.value)}
               />
               <TextField
+                name="email"
                 error={email ? false : true}
                 required
                 id="outlined-error"
@@ -129,8 +132,9 @@ export default function AttendanceForm({ id, date, title, location, description,
               />
             </div>
             <div style={{ display: "flex" }}>
-              <GenderSelect gender={gender} setGender={setGender} />
+              <GenderSelect name="gender" gender={gender} setGender={setGender} />
               <TextField
+                name="birthday"
                 error={birthday ? false : true}
                 id="outlined-error-helper-text"
                 label="Birthday"
@@ -141,6 +145,7 @@ export default function AttendanceForm({ id, date, title, location, description,
                 onChange={e => setBirthday(e.target.value)}
               />
               <TextField
+                name="hobbies"
                 error={hobbies ? false : true}
                 id="outlined-multiline-static"
                 label="Hobbies"
