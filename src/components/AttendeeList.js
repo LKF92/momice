@@ -74,9 +74,11 @@ export default function AttendeeList({ eventID, newUser, setNewUser }) {
   return (
     <>
       {triggerMutation === true && (
+        // Unfortunately this mutation hook was triggering inifinite loop as this issue explains :
+        // https://github.com/apollographql/react-apollo/issues/2522
+        // It worked but the app crashed everytime someone registered to an event so I decided to try differently (again)
         <Mutation mutation={NEW_ATTENDEE}>
           {(newAttendee, response) => {
-            console.log("response from NEW_ATTENDEE", response);
             newAttendee({ variables: { eventID: eventID, userID: newUser } }).then(data =>
               setTriggerMutation(false)
             );
