@@ -47,7 +47,7 @@ const NEW_ATTENDEE = gql`
   }
 `;
 
-export default function AttendanceForm({ id, date, title, location, description, setRefresh }) {
+export default function AttendanceForm({ id, date, title, location, description, queryToRefetch }) {
   const classes = useStyles();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -77,12 +77,12 @@ export default function AttendanceForm({ id, date, title, location, description,
       mutation={NEW_USER}
       onCompleted={data => {
         newAttendee({
-          variables: { eventID: id, userID: data.newUser.id }
-        }).then(data => setRefresh(Math.random()));
+          variables: { eventID: id, userID: data.newUser.id },
+          refetchQueries: [{ query: queryToRefetch, variables: { eventID: id } }]
+        });
       }}
     >
       {(newUser, response) => {
-        // if (response.called) console.log("response from mutation:", response);
         return (
           <form
             className={classes.root}

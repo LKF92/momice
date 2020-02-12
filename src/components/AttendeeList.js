@@ -1,7 +1,4 @@
-import React, { useEffect, useState } from "react";
-import gql from "graphql-tag";
-import { useQuery } from "@apollo/react-hooks";
-import { Mutation } from "@apollo/react-components";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -26,31 +23,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-// GRAPHQL REQUEST and MUTATIONS : query all the attendees of a specific event
-const ALL_ATTENDEES = gql`
-  query getAttendees($eventID: ID!) {
-    allAttendees(eventID: $eventID) {
-      id
-      user {
-        id
-        firstName
-        lastName
-        email
-      }
-    }
-  }
-`;
-
-export default function AttendeeList({ eventID, newUser, setNewUser }) {
+export default function AttendeeList({ eventID, newUser, setNewUser, data }) {
   const classes = useStyles();
-
-  // useQuery from Apollo Client to get the list of attendees
-  const { data, loading, error } = useQuery(ALL_ATTENDEES, {
-    variables: { eventID: eventID }
-  });
-  if (loading) return <p> ...loading...</p>;
-  if (error) return <p>ERROR: {error.message}</p>;
-  if (!data) return <p>Not found</p>;
 
   return (
     <>
